@@ -70,14 +70,7 @@ commands = [
 [tool.tox.env.prettier]
 skip_install = true
 allowlist_externals = ["npx"]
-commands = [
-  [
-    "npx",
-    "prettier",
-    "--check",
-    "**/*.{json,yml,yaml,md}",
-  ],
-]
+commands = [["npx", "prettier", "--check", "**/*.{json,yml,yaml,md}"]]
 
 [tool.tox.env."toml-lint"]
 skip_install = true
