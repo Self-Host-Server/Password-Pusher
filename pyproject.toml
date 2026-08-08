@@ -1,54 +1,4 @@
 # =============================================================================
-# GIT-CLIFF — PR description generator
-# =============================================================================
-
-[tool.git-cliff.changelog]
-header = ""
-body = """
-## Summary
-{% for group, commits in commits | group_by(attribute="group") %}
-### {{ group }}
-{% for commit in commits %}
-- {{ commit.message | upper_first }}
-{%- endfor %}
-{% endfor %}
-
-## Test plan
-
-- [ ] Review the changes above
-- [ ] Existing tests pass
-"""
-trim = true
-
-[tool.git-cliff.git]
-conventional_commits = true
-filter_unconventional = false
-commit_parsers = [
-  { message = "^feat", group = "✨ Features" },
-  { message = "^fix", group = "🐛 Bug Fixes" },
-  { message = "^docs", group = "📚 Documentation" },
-  { message = "^refactor", group = "♻️ Refactoring" },
-  { message = "^test", group = "🧪 Tests" },
-  { message = "^perf", group = "⚡ Performance" },
-  { message = "^chore", group = "🔧 Chores" },
-  { message = "^lint", group = "🔧 Chores" },
-  { message = ".*", group = "📝 Changes" },
-]
-
-# =============================================================================
-# RUFF — Python linter & formatter
-# =============================================================================
-
-[tool.ruff]
-line-length = 180
-exclude = ["__pycache__", "venv", ".tox", ".venv", "tests.py", "env"]
-
-[tool.ruff.lint]
-select = ["E", "F", "B"]
-ignore = ["E203", "E501", "E701", "E401", "B008"]
-
-
-# =============================================================================
 # TOX — Test & task runner
 # =============================================================================
 
@@ -93,16 +43,6 @@ commands = [
   ],
 ]
 
-[tool.tox.env."combined-imports-check"]
-skip_install = true
-deps = []
-commands = [["python3", "Python/scripts/combined_imports_check.py"]]
-
-[tool.tox.env."no-classes-check"]
-skip_install = true
-deps = []
-commands = [["python3", "Python/scripts/no_classes_check.py"]]
-
 # --- Formatting -------------------------------------------------------------
 
 [tool.tox.env.format]
@@ -111,32 +51,12 @@ deps = ["ruff", "typo"]
 allowlist_externals = ["npx"]
 commands = [
   [
-    "python3",
-    "Python/scripts/combined_imports_check.py",
-    "--fix",
-  ],
-  [
-    "ruff",
-    "format",
-    "--no-cache",
-    "--verbose",
-    ".",
-  ],
-  [
-    "ruff",
-    "check",
-    "--no-cache",
-    "--fix",
-    "--verbose",
-    ".",
-  ],
-  [
     "npx",
     "prettier",
     "--write",
     "--log-level",
     "log",
-    "**/*.{css,js,html,json,yml,yaml,md}",
+    "**/*.{json,yml,yaml,md}",
   ],
   [
     "npx",
@@ -155,7 +75,7 @@ commands = [
     "npx",
     "prettier",
     "--check",
-    "**/*.{css,js,html,json,yml,yaml,md}",
+    "**/*.{json,yml,yaml,md}",
   ],
 ]
 
@@ -192,11 +112,6 @@ commands = [
   [
     "tox",
     "-e",
-    "no-classes-check",
-  ],
-  [
-    "tox",
-    "-e",
     "lint",
   ],
   [
@@ -213,11 +128,6 @@ commands = [
     "tox",
     "-e",
     "toml-lint",
-  ],
-  [
-    "tox",
-    "-e",
-    "combined-imports-check",
   ],
 ]
 
