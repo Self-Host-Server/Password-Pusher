@@ -12,6 +12,11 @@
 #      https://pwpush.example.com
 # 5) Stop:
 #      docker compose down
+#
+# --- Local / no-domain use ---
+# If you don't set `TLS_DOMAIN`, the app serves plain HTTP on port 80
+# (mapped below) instead of HTTPS on 443. Access it at http://localhost.
+# Setting `TLS_DOMAIN` later activates HTTPS on port 443 automatically.
 
 x-env: &x-env
   environment:
@@ -161,8 +166,8 @@ services:
     image: docker.io/pglombardo/pwpush:latest
     restart: unless-stopped
     ports:
-      - "443:443"
-      # - "80:80" # To support older browsers
+      - "443:443" # HTTPS - active once TLS_DOMAIN is set below
+      - "80:80" # Plain HTTP - works locally / without a domain
       # - "5100:5100" # High port if you host pwpush behind a proxy (HTTP)
     platform: linux/amd64
     volumes:
