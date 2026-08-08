@@ -179,8 +179,8 @@ services:
       start_period: 40s
     <<: *x-env
     # Optional external env file support (alternative to setting values above directly).
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
 
 # Persists SQLite DB and file uploads. To use a host path instead, replace the
 # pwpush-storage service volume with: - /path/on/host:/opt/PasswordPusher/storage
