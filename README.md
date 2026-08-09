@@ -43,8 +43,11 @@ for the most common options (TLS, mail/SMTP, file storage backends, push
 expiry defaults, branding, etc.), and the full reference in the
 [Password Pusher self-hosted configuration docs](https://docs.pwpush.com/docs/self-hosted-configuration/).
 
-Data (SQLite database and file uploads) persists in the `pwpush-storage`
-Docker volume.
+This stack runs PostgreSQL as the database (`postgres` service), with data
+persisted in the `pwpush-postgres-data` Docker volume. Credentials are set
+via `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` in `.env` — change
+the default password before deploying. File uploads persist in the
+`pwpush-storage` Docker volume.
 
 > **Note:** Password Pusher authenticates with email/password + optional
 > TOTP two-factor auth (via Devise). It does not support OIDC/OAuth/SAML SSO.
