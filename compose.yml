@@ -205,7 +205,11 @@ services:
     volumes:
       - pwpush-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pwpush} -d ${POSTGRES_DB:-pwpush}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-pwpush} -d ${POSTGRES_DB:-pwpush}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
