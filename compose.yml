@@ -33,6 +33,11 @@ x-env: &x-env
     # PWPUSH_MASTER_KEY: ""     # Set your own encryption key (recommended)
     # SMTP settings below       # Required for account emails/logins
 
+    # --- Database (PostgreSQL) ---
+    # Connects pwpush to the `postgres` service below instead of the default SQLite file.
+    # Credentials come from POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB (set them in `.env`).
+    DATABASE_URL: postgres://${POSTGRES_USER:-pwpush}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-pwpush}
+
     # --- Security & TLS ---
     # PWPUSH_MASTER_KEY: This sets the encryption key for the database. If omitted, a default encryption key is used.
     # For production, generate your own key and set it here so encrypted pushes use your key.
@@ -182,13 +187,34 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    depends_on:
+      postgres:
+        condition: service_healthy
     <<: *x-env
     # Optional external env file support (alternative to setting values above directly).
     env_file:
       - .env
 
-# Persists SQLite DB and file uploads. To use a host path instead, replace the
-# pwpush-storage service volume with: - /path/on/host:/opt/PasswordPusher/storage
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pwpush}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-pwpush}
+    volumes:
+      - pwpush-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pwpush} -d ${POSTGRES_DB:-pwpush}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# Persists file uploads (and the SQLite DB if DATABASE_URL isn't set).
+# To use a host path instead, replace the pwpush-storage service volume with:
+# - /path/on/host:/opt/PasswordPusher/storage
 volumes:
   pwpush-storage:
+    driver: local
+  pwpush-postgres-data:
     driver: local
