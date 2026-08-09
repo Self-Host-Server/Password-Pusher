@@ -196,7 +196,9 @@ services:
       - .env
 
   postgres:
-    image: postgres:16-alpine
+    # Fully-qualified (docker.io/...) so this resolves on Podman setups that
+    # don't have unqualified-search registries configured, matching pwpush above.
+    image: docker.io/library/postgres:16-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-pwpush}
